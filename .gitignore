@@ -19,7 +19,6 @@ runs/
 finetune_split/
 
 # Outputs
-outputs/
 
 # macOS
 .DS_Store

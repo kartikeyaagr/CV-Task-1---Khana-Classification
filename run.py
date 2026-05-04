@@ -22,20 +22,54 @@ from src.visualize import draw_detections
 
 
 def load_classes(path: str) -> list[str]:
-    return [line.strip() for line in Path(path).read_text().splitlines() if line.strip()]
+    return [
+        line.strip() for line in Path(path).read_text().splitlines() if line.strip()
+    ]
 
 
 def parse_args():
     p = argparse.ArgumentParser(description="Thali food detection – Task 2")
-    p.add_argument("--model",      required=True,  help="Path to Task 1 ConvNeXt .pt file")
-    p.add_argument("--classes",    required=True,  help="Path to classes.txt (one class per line)")
-    p.add_argument("--images",     default="data/images", help="Folder of thali images")
-    p.add_argument("--output",     default="outputs",     help="Output folder for annotated images")
-    p.add_argument("--model-name", default="convnext_small.fb_in22k_ft_in1k",
-                   help="timm model name matching Task 1 architecture")
-    p.add_argument("--img-size",   type=int, default=320, help="Classifier input size")
-    p.add_argument("--det-conf",   type=float, default=0.25, help="YOLO detection confidence threshold")
-    p.add_argument("--yolo",       default="yolov8x.pt", help="YOLO weights to use for detection")
+    p.add_argument(
+        "--model",
+        required=True,
+        help="Path to Task 1 ConvNeXt .pt file",
+        default="models/95.3-25t-8f.pt",
+    )
+    p.add_argument(
+        "--classes",
+        required=True,
+        help="Path to classes.txt (one class per line)",
+        default="data/classes.txt",
+    )
+    p.add_argument(
+        "--images",
+        default="data/images",
+        help="Folder of thali images",
+        default="data/images",
+    )
+    p.add_argument(
+        "--output",
+        default="outputs",
+        help="Output folder for annotated images",
+        default="outputs",
+    )
+    p.add_argument(
+        "--model-name",
+        default="convnext_small.fb_in22k_ft_in1k",
+        help="timm model name matching Task 1 architecture",
+    )
+    p.add_argument("--img-size", type=int, default=320, help="Classifier input size")
+    p.add_argument(
+        "--det-conf",
+        type=float,
+        default=0.25,
+        help="YOLO detection confidence threshold",
+    )
+    p.add_argument(
+        "--yolo",
+        default="models/thali_detector.pt",
+        help="YOLO weights to use for detection",
+    )
     return p.parse_args()
 
 
@@ -62,7 +96,9 @@ def main():
     pipeline = ThaliPipeline(classifier=classifier, detector=detector)
 
     image_paths = sorted(Path(args.images).glob("*"))
-    image_paths = [p for p in image_paths if p.suffix.lower() in {".jpg", ".jpeg", ".png"}]
+    image_paths = [
+        p for p in image_paths if p.suffix.lower() in {".jpg", ".jpeg", ".png"}
+    ]
     print(f"\nProcessing {len(image_paths)} images ...\n")
 
     all_results = {}

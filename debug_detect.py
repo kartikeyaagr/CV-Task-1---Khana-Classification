@@ -17,17 +17,23 @@ from src.visualize import draw_detections
 
 def parse_args():
     p = argparse.ArgumentParser()
-    p.add_argument("--image",    default=None,          help="Single image (optional)")
-    p.add_argument("--images",   default="data/images", help="Folder of images")
-    p.add_argument("--conf",     type=float, default=0.05,  help="YOLO confidence threshold")
-    p.add_argument("--nms-iou",  type=float, default=0.25,  help="NMS IoU threshold")
-    p.add_argument("--max-box",  type=float, default=0.25,  help="Max box area as fraction of image")
-    p.add_argument("--min-box",  type=float, default=0.01,  help="Min box area as fraction of image")
-    p.add_argument("--ms-sp",    type=int,   default=20,    help="Mean shift spatial radius")
-    p.add_argument("--ms-sr",    type=int,   default=40,    help="Mean shift colour radius")
-    p.add_argument("--clahe",    action="store_true",        help="CLAHE contrast enhancement")
-    p.add_argument("--unsharp",  action="store_true",        help="Unsharp mask (sharpens edges)")
-    p.add_argument("--yolo",     default="yolov8x.pt")
+    p.add_argument("--image", default=None, help="Single image (optional)")
+    p.add_argument("--images", default="data/images", help="Folder of images")
+    p.add_argument("--conf", type=float, default=0.05, help="YOLO confidence threshold")
+    p.add_argument("--nms-iou", type=float, default=0.25, help="NMS IoU threshold")
+    p.add_argument(
+        "--max-box", type=float, default=0.25, help="Max box area as fraction of image"
+    )
+    p.add_argument(
+        "--min-box", type=float, default=0.01, help="Min box area as fraction of image"
+    )
+    p.add_argument("--ms-sp", type=int, default=20, help="Mean shift spatial radius")
+    p.add_argument("--ms-sr", type=int, default=40, help="Mean shift colour radius")
+    p.add_argument("--clahe", action="store_true", help="CLAHE contrast enhancement")
+    p.add_argument(
+        "--unsharp", action="store_true", help="Unsharp mask (sharpens edges)"
+    )
+    p.add_argument("--yolo", default="models/thali_detector.pt")
     return p.parse_args()
 
 
@@ -56,10 +62,16 @@ def main():
 
     for img_path in paths:
         detections = detector.detect(str(img_path))
-        source = "YOLO" if detections and detections[0]["coco_label"] != "region" else "contour fallback"
+        source = (
+            "YOLO"
+            if detections and detections[0]["coco_label"] != "region"
+            else "contour fallback"
+        )
         print(f"\n[{img_path.name}] {len(detections)} regions ({source})")
         for d in detections:
-            print(f"  {d['coco_label']:<10}  conf={d['yolo_conf']:.2f}  bbox={d['bbox']}")
+            print(
+                f"  {d['coco_label']:<10}  conf={d['yolo_conf']:.2f}  bbox={d['bbox']}"
+            )
 
         for d in detections:
             d["label"] = d["coco_label"]
