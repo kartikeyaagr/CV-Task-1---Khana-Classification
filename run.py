@@ -33,7 +33,7 @@ def parse_args():
         "--model",
         required=True,
         help="Path to Task 1 ConvNeXt .pt file",
-        default="models/95.3-25t-8f.pt",
+        default="models/best_detection.pt",
     )
     p.add_argument(
         "--classes",
