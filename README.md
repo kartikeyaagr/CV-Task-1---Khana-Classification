@@ -53,6 +53,53 @@ Saves annotated images with raw YOLO boxes to `outputs/debug/`. Useful for tunin
 
 Additional flags: `--conf`, `--nms-iou`, `--max-box`, `--min-box`, `--clahe`, `--unsharp`.
 
+### Evaluate label Precision/Recall
+
+After running the pipeline, compare predictions against a ground truth file:
+
+```bash
+uv run evaluate.py \
+  --predictions  outputs/predictions.json \
+  --ground-truth data/ground_truth.json
+```
+
+Add `--verbose` to see a per-image breakdown of correct, missed, and extra labels.
+
+**Ground truth JSON format** (either form is accepted):
+
+```json
+{ "image1.jpg": [{"label": "rice"}, {"label": "dal"}] }
+```
+```json
+{ "image1.jpg": ["rice", "dal"] }
+```
+
+**Output:**
+
+```
+=== Micro-averaged (aggregate) ===
+  Precision : 0.8571
+  Recall    : 0.7500
+  F1        : 0.8000
+  TP=6  FP=1  FN=2
+
+=== Macro-averaged (per-image mean) ===
+  Precision : 0.8333
+  Recall    : 0.7222
+  F1        : 0.7738
+```
+
+**Key flags:**
+
+| Flag               | Default  | Description                              |
+| ------------------ | -------- | ---------------------------------------- |
+| `--predictions`    | required | Path to `predictions.json` from `run.py` |
+| `--ground-truth`   | required | Path to ground truth JSON                |
+| `--output`         | —        | Save full per-image results to JSON      |
+| `--verbose` / `-v` | off      | Print per-image label breakdown          |
+
+> Only label presence is evaluated — bounding box coordinates are ignored.
+
 ### Re-train the detector
 
 ```bash
@@ -66,6 +113,7 @@ Reads labelled images from `finetune_images/train/`, splits 80/20, offline-augme
 ```
 .
 ├── run.py                  # Main entry point
+├── evaluate.py             # Label Precision/Recall evaluation
 ├── finetune.py             # Fine-tune YOLOv8n on thali data
 ├── debug_detect.py         # Detection-only debug script
 ├── src/
